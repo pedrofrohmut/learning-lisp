@@ -12,4 +12,5 @@
         (list head (car tail))
         (my-but-last tail))))
 
-(print (my-but-last '(A B C D E)))
+(print
+ (format nil "My list last two: ~S" (my-but-last '(A B C D E))))
