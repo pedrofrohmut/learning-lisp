@@ -1,5 +1,5 @@
 #|
-  Find the last but one box of a list.
+  2. (*) Find the last but one box of a list.
   Example:
   * (my-but-last '(a b c d))
   (C D)

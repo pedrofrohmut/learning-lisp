@@ -1,5 +1,5 @@
 #|
-    Reverse a list
+    5. (*) Reverse a list
 |#
 
 (defun my-rev-aux (my-list acc)
