@@ -1,14 +1,20 @@
 #|
     7. (**) Flatten a nested list structure.
-    Transform a list, possibly holding lists as elements into a `flat' list by replacing each list with its elements (recursively).
+
+    Transform a list, possibly holding lists as elements into a `flat' list by replacing
+    each list with its elements (recursively).
 
     Example:
     * (my-flatten '(a (b (c d) e)))
     (A B C D E)
 |#
 
-;; return head . (my-fun tail)
+;; TODO: Impl this
+(defun my/flatten ()
+  )
 
-(defun my/flatten (my-list)
+(defun test-07 (struc)
+  (print
+   (format nil "Structure before: ~S is flatten to: ~S" struc (my/flatten struc))))
 
-(defun test-07 '(a (b (c d) e)))
+(test-07 '(a (b (c d) e)))
