@@ -192,3 +192,116 @@
 (format t "Loop a list -> ")
 (loop for x in '(Peter Paul Mary) do
   (format t " ~s" x))
+(terpri)
+
+;; Dotimes - simpler and not verbose way of doing something n times
+(format t "Dotimes ->")
+(dotimes (x 15)
+  (format t " ~d" x)) ;; prints 0 to 14
+(terpri)
+
+(format t "~S~%~S~%~S~%"
+        ;; Create a list
+        (list 'superman 'batman 'flash)
+        ;; Prepend to list
+        (cons 'superman 'batman)
+        (cons 'aquaman '(superman batman)))
+
+(defvar *heroes* '(superman batman flash aquaman))
+
+;; Car - Gets the first element of the list
+(format t "Car (head) -> ~a~%" (car *heroes*))
+
+;; Cdr - gets a list with the rest of the initial list
+(format t "Cdr (tail) -> ~a~%" (cdr *heroes*))
+
+;; Listp - checks if it is a list
+(format t "Listp -> ~a~%" (listp *heroes*))
+
+;; Member - checks if an element is member of a list
+(format t "if Member  -> ~a~%" (if (member 'flash *heroes*) t nil))
+(format t "if Member2 -> ~a~%" (if (member 'supergirl *heroes*) t nil))
+
+;; Append - can append a list to another list
+(format t "Append -> ~s~%" (append *heroes* '(green-lantern)))
+
+;; Push - push value to the front of a list
+(format t "Push  -> ~s~%" (push 'batgirl *heroes*))
+
+;; Nth - get element n of list starting with 1
+(format t "Nth -> ~s~%" (nth 2 *heroes*))
+
+;; Plist - list with symbols to describe the data inside of it
+(defvar superman (list :name "Superman" :secret-id "Clark Kent"))
+(defvar *my-heroes* nil)
+(push superman *my-heroes*) ;; Add superman to my heroes list
+
+;; Dolist - like a foreach for lists
+(dolist (hero *my-heroes*)
+  ;; Trick to get things out of the list to print
+  (format t "~{~a : ~a~}~%" hero))
+
+;; Association list
+(defparameter *heroes2* '((Superman (Clark Kent) (6ft 3 in) (230 lbs))
+                          (Batman   (Bruce Wayne) (6ft 0 in) (190 lbs))
+                          (Flash    (Barry Allen) (6ft 2 in) (210 lbs))))
+
+;; Get the list of superman
+(format t "Superman Data: ~a~%" (assoc 'superman *heroes2*))
+
+;; Get secret id from the Association list
+(format t "Superman Data: ~a~%" (car (cdr (assoc 'superman *heroes2*))))
+
+;; Define a function called hello
+(defun hello ()
+  (format t "Hello, World!")
+  (terpri))
+
+;; Invokes the function hello with no arguments
+(hello)
+
+;; Define a function with arguments
+(defun get-avg (n1 n2)
+  (setq avarage (/ (+ n1 n2) 2))
+  (format t "Avarage of ~d and ~d is ~d~%" n1 n2 avarage))
+
+(get-avg 15 25)
+
+;; Define a function with optional arguments
+(defun my/print-list (x y &optional z w)
+  (format t "List -> ~S~%" (list x y z w)))
+
+(my/print-list 1 2)
+(my/print-list 1 2 3)
+(my/print-list 1 2 3 4)
+
+;; Defun with &rest to accept a variable number of arguments as a list
+(defun my/sum (&rest nums)
+  (setq total 0)
+  (dolist (n nums)
+    (setq total (+ total n)))
+  (format t "Sum: ~d~%" total))
+
+(my/sum 1 2 3 4 5)
+(my/sum 35 34)
+(my/sum 12 1)
+
+;; Using keys to id the parameters
+(defun my/print-list2 (&optional &key x y z)
+  (format t "List: ~s~%" (list x y z)))
+
+;; In this case they are all optional and if you using the symbols the order doesnt matter
+(my/print-list2)
+(my/print-list2 :x 3)
+(my/print-list2 :x 3 :y 2)
+(my/print-list2 :z 1 :x 3)
+(my/print-list2 :x 3 :y 5 :z 18)
+(my/print-list2 :z 18 :y 5 :x 3)
+
+;; Return-from - can be used to return from a functional
+(defun my/diff (n1 n2)
+  (return-from my/diff (- n1 n2)))
+
+(let ((n1 5)
+      (n2 18))
+  (format t "My/diff ~d - ~d =  ~d~%" n1 n2 (my/diff n1 n2)))
