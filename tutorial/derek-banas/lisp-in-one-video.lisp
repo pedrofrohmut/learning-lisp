@@ -108,10 +108,12 @@
 
 (defvar *age* 18)
 
+(format t "If not ->~%")
 (if (not (>= *age* 18))
   (format t "You can't vote~%")
   (format t "You can vote~%"))
 
+(format t "If and ->~%")
 (if (and (>= *age* 14) (< *age* 67))
   (format t "Time for work~%")
   (format t "Work if you want~%"))
@@ -120,6 +122,7 @@
 (defvar *num-2* 2)
 (defvar *num-3* 2)
 
+(format t "Progn ->~%")
 (if (= *num* 2)
   ;; progn - To execute multiple statements in the if condition (make it like a block of statements)
   (progn
@@ -128,25 +131,64 @@
     (format t "It is equal to 2~%"))
   (format t "Not equal to 2~%"))
 
-(defvar *age-2* 5)
+(defvar *age-2* 18)
 
 ;; Case expression
+(format t "Case ->~%")
 (defun get-school (age)
   (case age
-    (5 (print "Kindergarten"))
-    (6 (print "First grade"))
-    (otherwise (print "Middle school"))))
+    (5 (format t "Kindergarten~%"))
+    (6 (format t "First grade~%"))
+    (otherwise (format t "Middle school~%"))))
 
 (get-school *age-2*)
 
+;; Insert new line
+(format t "Terpri ->~%")
 (terpri) ;; prints a new line to stdout
 
 ;; when - If condition without the else block
+(format t "When ->~%")
 (when (= *age-2* 18)
   (setf *num-3* 18)
   (format t "Go to college you are ~d~%" *num-3*))
 
 ;; unless - Same of when but the opposite
+(format t "Unless ->~%")
 (unless (>= *age-2* 18)
   (setf *num-3* 24)
   (format t "You cannot drink alcohol~%"))
+
+;; Cond
+(format t "Cond ->~%")
+(defvar *age-3* 18)
+(defvar *college-ready* nil)
+(cond ((>= *age-3* 18)
+       (setf *college-ready* 'yes)
+       (format t "Ready for college.~%"))
+      ((< *age-3* 18)
+       (setf *college-ready* 'no)
+       (format t "Not ready for college.~%"))
+      (t ;; Default case
+       (format t "Unreachable~%")))
+
+;; Loop for counter in a range 1 to n
+(format t "Loop for  -> ")
+(loop for x from 1 to 30 do
+  (format t " ~d" x))
+(terpri)
+
+;; Loop with increment counter and when escape condition
+(format t "Loop when -> ")
+(setq x 1)
+(loop
+  (format t " ~d" x)
+  (setq x (+ x 1))
+  (when (> x 30)
+    (return x)))
+(terpri)
+
+;; Loop a list of elements
+(format t "Loop a list -> ")
+(loop for x in '(Peter Paul Mary) do
+  (format t " ~s" x))
