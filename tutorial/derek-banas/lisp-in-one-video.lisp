@@ -286,6 +286,32 @@
 (my/sum 35 34)
 (my/sum 12 1)
 
+(defun fact (n)
+  (when (< n 1)
+    (return-from fact 666))
+  (when (= n 1)
+    (return-from fact 1))
+  (* n (fact(- n 1)))
+  )
+
+(format t "Fact: ~d~%" (fact 0))
+(format t "Fact: ~d~%" (fact 1))
+(format t "Fact: ~d~%" (fact 5))
+
+(defun fact2 (n)
+  (cond
+    ((< n 0) "Error: n must be a positive number")
+    ((<= n 1) 1)
+    (t (* n (fact2 (- n 1))))
+    )
+  )
+
+(format t "Fact2: ~d~%" (fact2 -1))
+(format t "Fact2: ~d~%" (fact2 0))
+(format t "Fact2: ~d~%" (fact2 1))
+(format t "Fact2: ~d~%" (fact2 5))
+
+
 ;; Using keys to id the parameters
 (defun my/print-list2 (&optional &key x y z)
   (format t "List: ~s~%" (list x y z)))
@@ -305,3 +331,110 @@
 (let ((n1 5)
       (n2 18))
   (format t "My/diff ~d - ~d =  ~d~%" n1 n2 (my/diff n1 n2)))
+
+;; Association list
+(defparameter *heroes3* '((Superman (Clark Kent) (6ft 3 in) (230 lbs))
+                          (Batman   (Bruce Wayne) (6ft 0 in) (190 lbs))
+                          (Flash    (Barry Allen) (6ft 2 in) (210 lbs))))
+
+;; Quasi Quoting - you use ` to treat code as data and , to execute some code inside the data
+(defun get-hero-data (size)
+  (format t "~a~%"
+          `(,(caar size) is ,(caddar size) and ,(cdddar size))))
+
+(get-hero-data *heroes3*)
+
+;; Mapcar - runs a function in the items of a list
+(let ((my-list '(1 2 3 a b)))
+  ;; You nest let here so that you can use the value of 'my-list'
+  (let ((result (mapcar #'numberp my-list)))
+    (format t "Mapcar -> in ~a what is a number ~a~%" my-list result)))
+
+;; Flet - You can use flet to declare a local function that exists only inside the flet scope
+;; * flet functions cannot see each other
+;; * flet functions cannot call themselves and cannot be recursive
+(flet
+    ((double-it (n)
+       (* n 2))
+     (triple-it (n)
+       (* n 3))
+     )
+
+  (let*
+      ((my-list '(1 2 3 4 5))
+       (result-double (mapcar #'double-it my-list))
+       (result-triple (mapcar #'triple-it my-list))
+       )
+
+    (progn
+      (format t "Flet -> in ~a the double of it is ~a~%" my-list result-double)
+      (format t "Flet -> in ~a the triple of it is ~a~%" my-list result-triple)
+      )
+    )
+  )
+
+;; Labels - Defines local functions that exists only inside the body.
+;; * labels is like flet but the functions can see each other so you can use recursion
+(labels
+    ((print-result (n result)
+       (if (not result)
+           nil
+           (format t "Labels -> The result of factorial of ~a is ~a~%" n result)))
+
+     (factorial (n)
+       (cond
+         ((< n 0)
+          (format t "Error: factorial must be a positive number. ~d is invalid.~%" n)
+          nil)
+
+         ((< n 2)
+          1)
+
+         (t
+          (* n (factorial (- n 1)))))) ;; Labels allows recursion
+     )
+
+  (print-result -1 (factorial -1))
+  (print-result  0 (factorial  0))
+  (print-result  1 (factorial  1))
+  (print-result  5 (factorial  5))
+  )
+
+;; Defining a function that can return multiple values
+(defun squares (n)
+  (values (expt n 2) (expt n 3)))
+
+;; Bind multiple values at once
+(multiple-value-bind (a b) (squares 2)
+  (format t "2 ^ 2 = ~d and 2 ^ 3 = ~d~%" a b))
+
+(defun times-3 (x) (* x 3))
+(defun times-4 (x) (* x 4))
+
+;; Funcall - Using higher-order functions
+(defun multiples (mult-func max-num)
+  (dotimes (x max-num)
+    (format t " ~d => ~d" x (funcall mult-func x))
+    (when (< x (- max-num 1))
+      (format t ", "))
+    )
+  (terpri)
+  )
+
+;; To pass a function is a convention to prepend it with a #
+;; It would work without, but using # make it clear it a function
+(format t "Multiples times-3:")
+(multiples #'times-3 10)
+(format t "Multiples times-4:")
+(multiples #'times-4 10)
+
+;; * Mapcar - applies a function to the elements of a list. Returns a list of the
+;; result elements
+;; * Lambda - defines a anonymus function. A function to be used as a normal function
+;; but that wont have a name. Useful when defining a function to single use on the spot
+(format t "Mapcar Lambda ->")
+(mapcar
+ (lambda (x) (format t " ~d" (* x 2)))
+ (list 1 2 3 4 5 6)
+ )
+(terpri)
