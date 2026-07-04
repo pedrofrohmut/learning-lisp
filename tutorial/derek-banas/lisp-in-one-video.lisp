@@ -499,7 +499,8 @@
 (defmethod make-sound ((the-mammal mammal))
   (format t "~a says ~a~%"
           (slot-value the-mammal 'name)
-          (slot-value the-mammal 'sound)))
+          (slot-value the-mammal 'sound))
+  )
 
 ;; Defining a generic for the name setter
 (defgeneric (setf mammal-name) (value the-mammal))
@@ -513,15 +514,18 @@
 
 ;; Mammal name getter
 (defmethod mammal-name ((the-mammal mammal))
-  (slot-value the-mammal 'name))
+  (slot-value the-mammal 'name)
+  )
 
 ;; Makes a mammal instance for *king-kong* and use the keys defined before to set
 ;; name and sound when creating an instance
 (defparameter *king-kong*
-  (make-instance 'mammal :name "King Kong" :sound "Rawwr"))
+  (make-instance 'mammal :name "King Kong" :sound "Rawwr")
+  )
 
 (defparameter *fluffy*
-  (make-instance 'mammal :name "Fluffy" :sound "Meow"))
+  (make-instance 'mammal :name "Fluffy" :sound "Meow")
+  )
 
 ;;(make-sound *dog*) ;; Dog here is a animal and not a mammal so it won't work
 (make-sound *king-kong*)
@@ -532,11 +536,11 @@
 (make-sound *king-kong*)
 
 ;; Defines the class dog that inherits from mammal
-(defclass dog (mammal)
-  ())
+(defclass dog (mammal) ())
 
 (defparameter *rover*
-  (make-instance 'dog :name "Rover" :sound "Woof"))
+  (make-instance 'dog :name "Rover" :sound "Woof")
+  )
 
 (make-sound *rover*)
 
@@ -561,5 +565,110 @@
 (format t "Make array [x][y] ->")
 (dotimes (x 3)
   (dotimes (y 3)
-    (format t " [~d][~d]: ~a" x y (aref num-array x y))))
+    (format t " [~d][~d]: ~a" x y (aref num-array x y))
+    )
+  )
 (terpri)
+
+(defparameter *people* (make-hash-table))
+
+;; Set values to hash table
+(setf (gethash '102 *people*) '(Paul Smith))
+(setf (gethash '103 *people*) '(Sam White))
+
+;; Get value from hash table at key '102
+(format t "~a~%" (gethash '102 *people*))
+
+;; Iterate through the key/value pairs of the hash table
+(defun print-hash-table ()
+  (format t "Print hash table ->~%")
+  (maphash #'(lambda (k v) (format t "~a = ~a~%" k v))
+           *people*
+   )
+  )
+
+(print-hash-table)
+
+;; Remove from hash table
+(format t "Remhash ->~% '103")
+(remhash '103 *people*)
+
+(print-hash-table)
+
+;; Definition of the struct name and fields
+(defstruct customer id name address)
+
+;; Makes an instance of the struct
+(setq paul-smith
+      (make-customer
+       :id 1000
+       :name "Paul Smith"
+       :address "123 Main st")
+      )
+
+(format t "~a~%" (customer-name paul-smith))
+
+(setq sally-white
+      (make-customer
+       :id 1001
+       :name "Sally White"
+       :address "122 Main St")
+      )
+
+(defun print-customer (customer)
+  (let
+      ((id (customer-id customer))
+       (name (customer-name customer))
+       (address (customer-address customer))
+       )
+
+    (format t "Print_Customer id: ~a, name: ~a, address: ~a~%" id name address)
+
+    )
+  )
+
+(print-customer paul-smith)
+(print-customer sally-white)
+
+(format t "Write struct -> ")
+(write paul-smith)
+(terpri)
+
+;; Open a file "test.txt" and write 2 lines in it
+(format t "With open file ->~%")
+(with-open-file (my-stream "test.txt" :direction :output :if-exists :supersede)
+  (write-line "First line" my-stream)
+  (write-line "Second line" my-stream)
+  (write-line "Third line" my-stream)
+  (write-line "Forth line" my-stream)
+  )
+
+(format t "Read file ->~%")
+(let ((in (open "test.txt" :if-does-not-exist nil)))
+  (when in
+    (loop for line = (read-line in nil)
+          while line do (format t "Line -> ~a~%" line)
+          )
+    (close in)
+    )
+  )
+
+(format t "My version of Read file ->~%")
+(let (
+      (in (open "test.txt" :if-does-not-exist nil))
+     )
+
+  (when in
+    (loop
+      (setq line (read-line in nil))
+
+      (when (not line)
+        (return nil)
+        )
+
+      (format t "Line -> ~a~%" line)
+      )
+
+    (close in)
+    )
+  )
