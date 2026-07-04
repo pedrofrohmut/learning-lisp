@@ -438,3 +438,128 @@
  (list 1 2 3 4 5 6)
  )
 (terpri)
+
+(defun asdf (&optional x y)
+  (when (or (not x) (not y))
+    (format t "x and/or y not provided.~%")
+    (return-from asdf)
+    )
+
+  (when (/= x 2)
+    (format t "X is not equal to 2~%")
+    (return-from asdf)
+    )
+
+  (setf y 2)
+  (format t "y: ~d~%" y)
+  )
+
+(asdf)
+(asdf 2 0)
+(asdf 5 0)
+
+;; Define the class animal with attributes name and sound
+(defclass animal ()
+  (name sound))
+
+;; Makes an instance of animal
+(defparameter *dog* (make-instance 'animal))
+
+;; Set the value for the instance
+(setf (slot-value *dog* 'name) "Spot")
+(setf (slot-value *dog* 'sound) "Woof")
+
+(format t "~a says ~a~%"
+        (slot-value *dog* 'name)
+        (slot-value *dog* 'sound))
+
+;; Defines the class mammal with name and sound
+(defclass mammal ()
+  (
+   ;; Associate it to the key :name
+   ;; Throws an error if no name is provided
+   (name
+    :initarg :name
+    :initform (error "Must provide a name"))
+
+   ;; Associate it to the key :sound;
+   ;; The default value is "No sound"
+   ;; Auto generates getters and setters for sound
+   (sound
+    :initarg :sound
+    :initform "No sound"
+    :accessor mammal-sound)
+   )
+  )
+
+;; Defines a generic method for mammal
+(defgeneric make-sound (mammal))
+
+;; Defines the implementation for the generic method defined before
+(defmethod make-sound ((the-mammal mammal))
+  (format t "~a says ~a~%"
+          (slot-value the-mammal 'name)
+          (slot-value the-mammal 'sound)))
+
+;; Defining a generic for the name setter
+(defgeneric (setf mammal-name) (value the-mammal))
+
+;; Implementation of the name setter
+(defmethod (setf mammal-name) (value (the-mammal mammal))
+  (setf (slot-value the-mammal 'name) value))
+
+;; Generic for the mammal name getter
+(defgeneric mammal-name (the-mammal))
+
+;; Mammal name getter
+(defmethod mammal-name ((the-mammal mammal))
+  (slot-value the-mammal 'name))
+
+;; Makes a mammal instance for *king-kong* and use the keys defined before to set
+;; name and sound when creating an instance
+(defparameter *king-kong*
+  (make-instance 'mammal :name "King Kong" :sound "Rawwr"))
+
+(defparameter *fluffy*
+  (make-instance 'mammal :name "Fluffy" :sound "Meow"))
+
+;;(make-sound *dog*) ;; Dog here is a animal and not a mammal so it won't work
+(make-sound *king-kong*)
+(make-sound *fluffy*)
+
+(setf (mammal-name *king-kong*) "Kong Broh")
+(setf (mammal-sound *king-kong*) "Uhaa")
+(make-sound *king-kong*)
+
+;; Defines the class dog that inherits from mammal
+(defclass dog (mammal)
+  ())
+
+(defparameter *rover*
+  (make-instance 'dog :name "Rover" :sound "Woof"))
+
+(make-sound *rover*)
+
+;; Create an array with 3 slots
+(defparameter *names* (make-array 3))
+
+;; Set the values for the positions
+;; aref is used to get a reference to the array
+(setf (aref *names* 0) 'Bob)
+(setf (aref *names* 1) 'John)
+(setf (aref *names* 2) 'Jane)
+
+;; Getters using the reference to the array
+(format t "Name 0 is ~a~%" (aref *names* 0))
+(format t "Name 1 is ~a~%" (aref *names* 1))
+(format t "Name 2 is ~a~%" (aref *names* 2))
+
+(setf num-array
+      (make-array '(3 3)
+                  :initial-contents '((0 1 2) (3 4 5) (6 7 8))))
+
+(format t "Make array [x][y] ->")
+(dotimes (x 3)
+  (dotimes (y 3)
+    (format t " [~d][~d]: ~a" x y (aref num-array x y))))
+(terpri)
